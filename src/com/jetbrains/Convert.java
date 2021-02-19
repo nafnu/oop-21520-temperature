@@ -1,118 +1,103 @@
 package com.jetbrains;
-import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.BorderLayout;
-import javax.swing.SwingConstants;
-import java.awt.Font;
-import java.awt.Color;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-import java.awt.Window.Type;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
+public class Convert extends JFrame {
 
-public class Convert {
+    private JLabel title;
 
-    private JFrame frame;
-    private JTextField inputTemperature;
+    private JTextField inputTemp;
     private JTextField result;
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Convert window = new Convert();
-                    window.frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+    private JRadioButton celsiusButton;
+    private JRadioButton fahrenheitButton;
+
+    private ButtonGroup radioGroup;
+
+    private JButton convertButton;
 
     public Convert() {
-        initialize();
-    }
+        super("Convertor");
+        setLayout(new FlowLayout());
 
-    private void initialize() {
-        frame = new JFrame();
-        frame.setType(Type.UTILITY);
-        frame.setBounds(100, 100, 450, 300);
-        frame.setSize(450,300);
-        frame.setTitle("Convertor App");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.getContentPane().setLayout(null);
 
-        JLabel label = new JLabel("Temperature Convertor");
-        label.setBounds(0, 0, 460, 47);
-        label.setBackground(new Color(107, 142, 35));
-        label.setForeground(new Color(255, 250, 224));
-        label.setFont(new Font("Serif", Font.BOLD, 20));
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setOpaque(true);
-        frame.getContentPane().add(label);
+        //Design of the title
+        title = new JLabel("Temperature conversion", SwingConstants.CENTER);
+        title.setBounds(0, 0, 460, 47);
+        title.setBackground(new Color(107, 142, 35));
+        title.setForeground(new Color(255, 250, 224));
+        title.setFont(new Font("Serif", Font.ITALIC + Font.BOLD, 20));
+        title.setOpaque(true);
+        add(title);
 
-        ButtonGroup group = new ButtonGroup();
-        JRadioButton celsiusButton = new JRadioButton("Celsius");
+        //Design of the input Temperature
+        inputTemp = new JTextField();
+        inputTemp.setFont(new Font("Serif", Font.PLAIN, 12));
+        inputTemp.setColumns(10);
+        inputTemp.setBounds(119, 111, 80, 20);
+        add(inputTemp);
+
+        //Create radio buttons
+        celsiusButton = new JRadioButton("Celsius");
         celsiusButton.setFont(new Font("Serif", Font.BOLD, 12));
         celsiusButton.setBounds(119, 55, 82, 38);
         celsiusButton.setHorizontalAlignment(SwingConstants.CENTER);
-        frame.getContentPane().add(celsiusButton);
-        group.add(celsiusButton);
-
-        JRadioButton fahrenheitButton = new JRadioButton("Fahrenheit ");
+        add(celsiusButton);
+        fahrenheitButton = new JRadioButton("Fahrenheit ");
         fahrenheitButton.setFont(new Font("Serif", Font.BOLD, 12));
         fahrenheitButton.setBounds(205, 64, 135, 21);
         fahrenheitButton.setHorizontalAlignment(SwingConstants.CENTER);
-        frame.getContentPane().add(fahrenheitButton);
-        group.add(fahrenheitButton);
+        add(fahrenheitButton);
 
-        inputTemperature = new JTextField();
-        inputTemperature.setFont(new Font("Serif", Font.PLAIN, 12));
-        inputTemperature.setBounds(119, 111, 208, 19);
-        frame.getContentPane().add(inputTemperature);
-        inputTemperature.setColumns(10);
 
+        //Logical relationship between JRadioButtons
+        radioGroup = new ButtonGroup();
+        radioGroup.add(celsiusButton);
+        radioGroup.add(fahrenheitButton);
+
+
+        //Design of the output Result
         result = new JTextField();
-        result.setFont(new Font("Serif", Font.PLAIN, 12));
-        result.setBounds(119, 190, 208, 19);
-        frame.getContentPane().add(result);
+        result.setFont(new Font("Serif", Font.BOLD, 12));
         result.setColumns(10);
+        result.setBounds(119, 190, 80, 20);
+        add(result);
 
-        JButton convertButton = new JButton("Convert");
+        //Create the button
+        convertButton = new JButton("Convert");
         convertButton.setFont(new Font("Serif", Font.BOLD, 12));
         convertButton.setBounds(157, 146, 128, 21);
-        frame.getContentPane().add(convertButton);
+        add(convertButton);
 
-        convertButton.addActionListener(new ActionListener() {
+        //register the events for the Button
+        convertButton.addItemListener(
+                new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent event) {
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                try {
-                    if (celsiusButton.isSelected()) {
-                        Double a = Double.parseDouble(inputTemperature.getText());
-                        Double resultValue = (a * 1.8000) + 32.00;
-                        result.setText(resultValue + " °F");
-                    } else {
-                        Double a = Double.parseDouble(inputTemperature.getText());
-                        Double resultValue = (a - 32) / 1.8000;
-                        result.setText(resultValue + " °C");
+                        try {
+                            if (celsiusButton.isSelected()) {
+                                Double a = Double.parseDouble(inputTemp.getText());
+                                Double resultValue = (a * 1.8000) + 32.00;
+                                result.setText(resultValue + " °F");
+                            } else {
+                                Double a = Double.parseDouble(inputTemp.getText());
+                                Double resultValue = (a - 32) / 1.8000;
+                                result.setText(resultValue + " °C");
+                            }
+
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Please, enter a valid number!", "ERROR_MESSAGE", JOptionPane.ERROR_MESSAGE);
+                        }
+
                     }
-
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(frame, "Please, enter a valid number!");
                 }
-            }
-        });
+        );
     }
+
 }
+
